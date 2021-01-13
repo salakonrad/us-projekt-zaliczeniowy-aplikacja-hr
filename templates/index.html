@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h3><span class="badge badge-success">Witaj w Systemie Kadrowym Salins!</span></h3>
+
+    {% if is_logged %}
+    {% if display_user %}
+    Witaj {{ display_user }}
+    {% endif %}
+    {% for post in posts %}
+    <a href="{{ url_for('post', post_id=post['id']) }}">
+        <h2>{{ post['title'] }}</h2>
+    </a>
+    <span class="badge badge-primary">{{ post['created'] }}</span>
+    <hr>
+    {% endfor %}
+    {% else %}
+    <div class="alert alert-danger" role="alert">
+      Zaloguj się aby zobaczyc posty
+    </div>
+    {% endif %}
+{% endblock %}
