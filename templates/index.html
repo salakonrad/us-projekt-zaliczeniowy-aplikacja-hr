@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h3><span class="badge badge-success">Welcome to Salins HR System!</span></h3>
+
+    {% if "email" not in session %}
+    <div class="alert alert-danger" role="alert">
+      Log in to see content
+    </div>
+    {% endif %}
+
+    <a class="btn btn-primary" href="{{ url_for('about')}}">About</a>
+    {% if "email" in session %}
+    <a class="btn btn-primary" href="{{ url_for('holidays_balances')}}">Holidays Balance</a>
+    <a class="btn btn-primary" href="{{ url_for('absences')}}">Absences</a>
+    <a class="btn btn-primary" href="{{ url_for('salaries')}}">Salaries</a>
+    <a class="btn btn-primary" href="{{ url_for('logout')}}">Log out</a>
+    {% else %}
+    <a class="btn btn-primary" href="{{ url_for('signin')}}">Sign in</a>
+    <a class="btn btn-primary" href="{{ url_for('signup')}}">Sign Up</a>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h3>Holiday Balance:</h3>
+    {% for dict_item in posts %}
+        <a href="{{ url_for('post', holiday_type=dict_item['holiday_type']) }}">
+            {{ dict_item['holiday_type'] }}
+        </a>
+        <hr>
+    {% endfor %}
+{% endblock %}

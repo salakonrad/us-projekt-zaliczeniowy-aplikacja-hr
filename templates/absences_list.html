@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if check_current_user_is_admin == True %}
+<h3>Employees absences: </h3>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Employee - ID</th>
+      <th scope="col">Employee - Email</th>
+      <th scope="col">Absence Type</th>
+      <th scope="col">Date From </th>
+      <th scope="col">Date To</th>
+      <th scope="col">Accept</th>
+      <th scope="col">Decline</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for dict_item in employees_absences %}
+    <tr>
+      <th scope="row">{{ dict_item['holiday_request_id'] }}</th>
+      <td>{{ dict_item['user_id'] }}</td>
+      <td>{{ dict_item['email'] }}</td>
+      <td>{{ dict_item['holiday_type'] }}</td>
+      <td>{{ dict_item['date_from'] }}</td>
+      <td>{{ dict_item['date_to'] }}</td>
+      <td><a class="btn btn-primary" href="{{ url_for('accept_absence', absence_id=dict_item['holiday_request_id'])  }}">Accept</a></td>
+      <td><a class="btn btn-primary" href="{{ url_for('remove_absence', absence_id=dict_item['holiday_request_id'])  }}">Decline</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<h3>Your absences: </h3>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Absence Type</th>
+      <th scope="col">Date From </th>
+      <th scope="col">Date To</th>
+      <th scope="col">Cancel</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for dict_item in absences_requests %}
+    <tr>
+      <th scope="row">{{ dict_item['id'] }}</th>
+      <td>{{ dict_item['holiday_type'] }}</td>
+      <td>{{ dict_item['date_from'] }}</td>
+      <td>{{ dict_item['date_to'] }}</td>
+      <td><a class="btn btn-primary" href="{{ url_for('remove_absence', absence_id=dict_item['id'])  }}">Cancel</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+<hr>
+{% endblock %}

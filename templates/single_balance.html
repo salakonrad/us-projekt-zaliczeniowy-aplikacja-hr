@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% for dict_item in post %}
+        <h2>{{ dict_item['holiday_type'] }}</h2>
+        <span class="badge badge-primary">{{ dict_item['amount_left'] }}</span> days left
+        <hr>
+    {% endfor %}
+
+    <a class="btn btn-primary" href="{{ url_for('holidays_balances')}}">Powrót</a>
+{% endblock %}

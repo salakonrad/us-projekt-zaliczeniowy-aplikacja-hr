@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message }}
+    </div>
+    {% endfor %}
+
+    <div class="container login-page-form" style="width:400px">
+        <h2>Sign in</h2>
+        <form method="POST" action="/signin">
+          <div class="form-gorup">
+              <label for="email">Email</label>
+              <input class="form-control" type="email" name="email" placeholder="Your Email" autofocus="">
+          </div><br>
+          <div class="form-gorup">
+              <label for="password">Password</label>
+              <input class="form-control" type="password" name="password" placeholder="Your Password">
+          </div><br>
+          <button type="submit" class="btn btn-success">Sign In</button>
+        </form>
+    </div>
+{% endblock %}

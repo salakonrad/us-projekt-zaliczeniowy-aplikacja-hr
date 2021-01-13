@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message }}
+    </div>
+    {% endfor %}
+
+    <h2>Witaj {{ session['email'] }}!</h2>
+
+    <div class="container login-page-form" style="width:400px">
+        <h2>Password change</h2>
+        <form method="POST" action="/user_panel">
+          <div class="form-gorup">
+              <label for="old_password">Old Password</label>
+              <input class="form-control" type="password" id="old_password" name="old_password" placeholder="Old Password" autofocus="">
+          </div><br>
+          <div class="form-gorup">
+              <label for="new_password">New Password</label>
+              <input class="form-control" type="password" id="new_password" name="new_password" placeholder="New Password">
+          </div><br>
+          <div class="form-gorup">
+              <label for="retype_new_password">Retype New Password</label>
+              <input class="form-control" type="password" id="retype_new_password" name="retype_new_password" placeholder="">
+          </div><br>
+          <button type="submit" class="btn btn-success">Change password</button>
+        </form>
+    </div><hr>
+
+
+    {% if check_current_user_is_admin == True %}
+    <h3>Users Panel: </h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Employee - Email</th>
+                <th scope="col">Delete User</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for dict_item in users %}
+            <tr>
+                <th scope="row">{{ dict_item['id'] }}</th>
+                <td>{{ dict_item['email'] }}</td>
+                <td><a class="btn btn-primary" href="{{ url_for('delete_user', user_id=dict_item['id']) }}">Delete</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+{% endblock %}
