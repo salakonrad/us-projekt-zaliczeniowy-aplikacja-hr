@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-
 {% block content %}
 <h3>Salaries: </h3>
 <table class="table table-striped">
@@ -7,6 +6,7 @@
   <thead>
     <tr>
       <th scope="col">#</th>
+      <th scope="col">User ID</th>
       <th scope="col">Employee - Email</th>
       <th scope="col">Amount Net</th>
       <th scope="col">Amount Gross</th>
@@ -16,7 +16,8 @@
   <tbody>
     {% for dict_item in salaries %}
     <tr>
-      <th scope="row">{{ dict_item['id'] }}</th>
+      <th scope="row">{{ loop.index }}</th>
+      <th scope="row">{{ dict_item['id_users'] }}</th>
       <td>{{ dict_item['email'] }}</td>
       <td>{{ dict_item['amount_net'] }} PLN</td>
       <td>{{ dict_item['amount_gross'] }} PLN</td>
@@ -25,7 +26,7 @@
     {% endfor %}
   </tbody>
   {% else %}
-    <thead>
+  <thead>
     <tr>
       <th scope="col">#</th>
       <th scope="col">Amount Net</th>
@@ -45,35 +46,36 @@
   </tbody>
   {% endif %}
 </table>
+{{ pagination.links }}
 
-    {% if check_current_user_is_admin == True %}
-    {% for message in get_flashed_messages() %}
-    <div class="alert alert-warning">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
-        {{ message }}
-    </div>
-    {% endfor %}
-    <div class="container login-page-form" style="width:400px">
-        <h2>Add Employee's Salary for next month</h2>
-        <form method="POST" action="/salaries">
-          <div class="form-gorup">
-              <label for="email">Employee Email</label><br>
-              <select name="email" id="email" class="form-select" aria-label="Default select example">
-                  {% for dict_item in users %}
-                  <option value="{{ dict_item['id'] }}">{{ dict_item['email'] }}</option>
-                  {% endfor %}
-              </select>
-              <br>
-              <label for="amount_net">Amount Net</label>
-              <input class="form-control" type="number" id="amount_net" name="amount_net" placeholder="Salary Net">
-              <label for="amount_gross">Amount Gross</label>
-              <input class="form-control" type="number" id="amount_gross" name="amount_gross" placeholder="Salary Net">
-              <label for="transfer_date">Transfer Date</label>
-              <input type="date" id="transfer_date" name="transfer_date" value="" min="2021-01-01" max="2021-12-31"><br>
-          </div><br>
-          <button type="submit" class="btn btn-success">Add Salary</button>
-        </form>
-    </div>
-    {% endif %}
+{% if check_current_user_is_admin == True %}
+{% for message in get_flashed_messages() %}
+<div class="alert alert-warning">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    {{ message }}
+</div>
+{% endfor %}
+<div class="container login-page-form" style="width:400px">
+    <h2>Add Employee's Salary for next month</h2>
+    <form method="POST" action="/salaries">
+      <div class="form-gorup">
+          <label for="email">Employee Email</label><br>
+          <select name="email" id="email" class="form-select" aria-label="Default select example">
+              {% for dict_item in users %}
+              <option value="{{ dict_item['id'] }}">{{ dict_item['email'] }}</option>
+              {% endfor %}
+          </select>
+          <br>
+          <label for="amount_net">Amount Net</label>
+          <input class="form-control" type="number" id="amount_net" name="amount_net" placeholder="Salary Net">
+          <label for="amount_gross">Amount Gross</label>
+          <input class="form-control" type="number" id="amount_gross" name="amount_gross" placeholder="Salary Net">
+          <label for="transfer_date">Transfer Date</label>
+          <input type="date" id="transfer_date" name="transfer_date" value="" min="2021-01-01" max="2021-12-31"><br>
+      </div><br>
+      <button type="submit" class="btn btn-success">Add Salary</button>
+    </form>
+</div>
+{% endif %}
 <hr>
 {% endblock %}

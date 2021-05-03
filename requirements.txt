@@ -3,3 +3,4 @@ Flask-Login==0.5.0
 Flask-MySQL==1.5.1
 flask-mysql-connector==1.0.3
 Flask-MySQLdb==0.2.0
+flask-paginate==0.8.1
