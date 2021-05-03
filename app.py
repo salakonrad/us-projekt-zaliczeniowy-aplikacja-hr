@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from werkzeug.exceptions import abort
 from flask_mysql_connector import MySQL
+from flask_paginate import Pagination, get_page_parameter
 import MySQLdb.cursors
 import re
 from datetime import datetime, date
@@ -8,6 +9,7 @@ from datetime import datetime, date
 app = Flask(__name__)
 app.secret_key = 'home'
 
+# app.config['MYSQL_HOST'] = '127.0.0.1'
 app.config['MYSQL_HOST'] = 'mysql'  # Added to run properly when with docker-compose
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'password'
@@ -22,6 +24,14 @@ def days_between(d1, d2):
         return 1
     else:
         return abs((d2 - d1).days)
+
+
+def mysql_query(sql):
+    cur = mysql.new_cursor(dictionary=True)
+    cur.execute(sql)
+    result = cur.fetchall()
+    cur.close()
+    return result
 
 
 def get_post(user_id, holiday_type):
@@ -210,6 +220,35 @@ def add_absence():
         return redirect(url_for('signin'))
 
 
+@app.route('/salaries/<email>', methods=['GET', 'POST'])
+def salaries_filtered(email):
+    if is_logged() and check_current_user_is_admin():
+        search = False
+        q = request.args.get('q')
+        if q:
+            search = True
+        # Get page number
+        page = request.args.get(get_page_parameter(), type=int, default=1)
+        # Set limit to results on one page
+        limit = 4
+        offset = page*limit - limit
+        # SQL Queries
+        sql = f"SELECT salaries.*, users.email FROM hr.salaries INNER JOIN hr.users ON salaries.id_users = users.id " \
+              f"WHERE users.email='{email}'; "
+        salary_count = len(mysql_query(sql))
+        sql = f"SELECT salaries.*, users.email FROM hr.salaries INNER JOIN hr.users ON salaries.id_users = users.id " \
+              f"WHERE users.email='{email}' LIMIT {offset}, {limit}; "
+        salary = mysql_query(sql)
+        sql = f"SELECT * FROM hr.users WHERE email != 'boss@salins.pl';"
+        users = mysql_query(sql)
+        # Prepare Pagination
+        pagination = Pagination(page=page, per_page=limit, total=salary_count, search=search, record_name='salary')
+        return render_template('salaries.html', users=users, salaries=salary,
+                               check_current_user_is_admin=check_current_user_is_admin(), pagination=pagination, css_framework='bootstrap4')
+    else:
+        return redirect(url_for('signin'))
+
+
 @app.route('/salaries', methods=['GET', 'POST'])
 def salaries():
     user_id = get_user_id_db(get_email_from_session())
@@ -224,11 +263,34 @@ def salaries():
             cursor.execute(f"INSERT INTO hr.salaries (id_users, amount_net, amount_gross, date) VALUES "
                            f"({email}, {amount_net}, {amount_gross}, '{transfer_date}');")
             mysql.connection.commit()
-        cur = mysql.new_cursor(dictionary=True)
-        cur.execute("SELECT * FROM hr.users WHERE email != 'boss@salins.pl';")
-        users = cur.fetchall()
-        return render_template('salaries.html', users=users, salaries=get_salary(user_id),
-                               check_current_user_is_admin=check_current_user_is_admin())
+        search = False
+        q = request.args.get('q')
+        if q:
+            search = True
+        # Get page number
+        page = request.args.get(get_page_parameter(), type=int, default=1)
+        # Set limit to results on one page
+        limit = 4
+        offset = page*limit - limit
+        # SQL Queries
+        if check_current_user_is_admin():
+            sql = f"SELECT salaries.*, users.email FROM hr.salaries INNER JOIN hr.users ON " \
+                  f"salaries.id_users = users.id; "
+            salary_count = len(mysql_query(sql))
+            sql = f"SELECT salaries.*, users.email FROM hr.salaries INNER JOIN hr.users ON " \
+                  f"salaries.id_users = users.id LIMIT {offset}, {limit}; "
+            salary = mysql_query(sql)
+            sql = f"SELECT * FROM hr.users WHERE email != 'boss@salins.pl';"
+            users = mysql_query(sql)
+        else:
+            sql = f"SELECT * FROM hr.salaries WHERE id_users={user_id};"
+            salary_count = len(mysql_query(sql))
+            sql = f"SELECT * FROM hr.salaries WHERE id_users={user_id} LIMIT {offset}, {limit};"
+            salary = mysql_query(sql)
+        # Prepare Pagination
+        pagination = Pagination(page=page, per_page=limit, total=salary_count, search=search, record_name='salary')
+        return render_template('salaries.html', users=users, salaries=salary,
+                               check_current_user_is_admin=check_current_user_is_admin(), pagination=pagination, css_framework='bootstrap4')
     else:
         return redirect(url_for('signin'))
 
