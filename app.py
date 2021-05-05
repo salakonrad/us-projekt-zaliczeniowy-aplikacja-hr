@@ -9,8 +9,8 @@ from datetime import datetime, date
 app = Flask(__name__)
 app.secret_key = 'home'
 
-# app.config['MYSQL_HOST'] = '127.0.0.1'
-app.config['MYSQL_HOST'] = 'mysql'  # Added to run properly when with docker-compose
+app.config['MYSQL_HOST'] = '127.0.0.1'
+# app.config['MYSQL_HOST'] = 'mysql'  # Added to run properly when with docker-compose
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'password'
 app.config['MYSQL_DATABASE'] = 'hr'
@@ -247,6 +247,20 @@ def salaries_filtered(email):
                                check_current_user_is_admin=check_current_user_is_admin(), pagination=pagination, css_framework='bootstrap4')
     else:
         return redirect(url_for('signin'))
+
+
+@app.route('/jquery')
+def jquery():
+    return render_template('jquery.html')
+
+
+@app.route('/sqlresults')
+def sql_results():
+    email = request.args.get('email', 'email', type=str)
+    sql = f"SELECT salaries.*, users.email FROM hr.salaries INNER JOIN hr.users ON salaries.id_users = users.id " \
+          f"WHERE users.email LIKE '{email}%'; "
+    results = mysql_query(sql)
+    return jsonify(result=str(results))
 
 
 @app.route('/salaries', methods=['GET', 'POST'])

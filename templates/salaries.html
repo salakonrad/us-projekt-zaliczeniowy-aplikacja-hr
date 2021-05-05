@@ -5,7 +5,6 @@
   {% if check_current_user_is_admin == True %}
   <thead>
     <tr>
-      <th scope="col">#</th>
       <th scope="col">User ID</th>
       <th scope="col">Employee - Email</th>
       <th scope="col">Amount Net</th>
@@ -16,7 +15,6 @@
   <tbody>
     {% for dict_item in salaries %}
     <tr>
-      <th scope="row">{{ loop.index }}</th>
       <th scope="row">{{ dict_item['id_users'] }}</th>
       <td>{{ dict_item['email'] }}</td>
       <td>{{ dict_item['amount_net'] }} PLN</td>
