@@ -9,12 +9,12 @@ services:
     volumes:
       - ~/Documents/STUDIA/As/db_files:/var/lib/mysql
 
-#  backend:
-#    build: .
-#    ports:
-#      - "5000:5000"
-#    depends_on:
-#      - mysql
+  backend:
+    build: .
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mysql
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin

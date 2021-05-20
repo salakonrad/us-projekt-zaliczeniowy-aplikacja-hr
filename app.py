@@ -9,8 +9,8 @@ from datetime import datetime, date
 app = Flask(__name__)
 app.secret_key = 'home'
 
-app.config['MYSQL_HOST'] = '127.0.0.1'
-# app.config['MYSQL_HOST'] = 'mysql'  # Added to run properly when with docker-compose
+# app.config['MYSQL_HOST'] = '127.0.0.1'
+app.config['MYSQL_HOST'] = 'mysql'  # Added to run properly when with docker-compose
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'password'
 app.config['MYSQL_DATABASE'] = 'hr'
